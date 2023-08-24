@@ -66,15 +66,14 @@ class Status(str, enum.Enum):
 class Ingestion(BaseModel):
     id: str
     status: Status
-    message: Optional[str]
+    message: Optional[str] = None
     created_by: str
     created_at: datetime = None
     updated_at: datetime = None
 
     item: Union[Item, Json[Item]]
 
-    @validator("created_at", pre=True, always=True, allow_reuse=True)
-    @validator("updated_at", pre=True, always=True, allow_reuse=True)
+    @validator("updated_at", "created_at", pre=True, always=True, allow_reuse=True)
     def set_ts_now(cls, v):
         return v or datetime.now()
 
