@@ -1,0 +1,106 @@
+[project]
+name = "pgstac-ingestor"
+description = "Construct and use map tile grids (a.k.a TileMatrixSet / TMS)."
+readme = "README.md"
+requires-python = ">=3.8"
+license = {file = "LICENSE"}
+authors = [
+    {name = "Anthony Lukach", email = "anthony@developmentseed.org"},
+    {name = "Sean Harkins", email = "sean@developmentseed.org"},
+    {name = "Vincent Sarago", email = "vincent@developmentseed.com"},
+]
+keywords = ["STAC", "PgSTAC"]
+classifiers = [
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: BSD License",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: GIS",
+]
+dynamic = ["version"]
+dependencies = [
+    "Authlib==1.0.1",
+    "cachetools==5.1.0",
+    "fastapi>=0.75.1",
+    "orjson>=3.6.8",
+    "psycopg[binary,pool]>=3.0.15",
+    "pydantic_ssm_settings>=0.2.0",
+    "pydantic>=1.9.0,<2.0",
+    "pypgstac==0.6.13",
+    "httpx",
+    # Waiting for https://github.com/stac-utils/stac-pydantic/pull/116
+    "stac-pydantic @ git+https://github.com/alukach/stac-pydantic.git@patch-1",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "pytest-cov",
+    "moto[dynamodb, ssm]>=4.0.9",
+]
+dev = [
+    "pre-commit",
+]
+docs = [
+    "mkdocs",
+    "mkdocs-material",
+    "pygments",
+]
+
+[project.urls]
+Source = "https://github.com/developmentseed/pgstac-ingestor"
+Documentation = "https://developmentseed.org/pgstac-ingestor/"
+
+[build-system]
+requires = ["flit>=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[tool.flit.module]
+name = "pgstac_ingestor"
+
+[tool.flit.sdist]
+exclude = [
+    "tests/",
+    "docs/",
+    ".github/",
+    "CHANGES.md",
+    "CONTRIBUTING.md",
+]
+
+[tool.coverage.run]
+branch = true
+parallel = true
+
+[tool.coverage.report]
+exclude_lines = [
+  "no cov",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+]
+
+[tool.isort]
+profile = "black"
+known_first_party = ["pypgstac"]
+known_third_party = ["pydantic", "boto3", "fastapi", ]
+default_section = "THIRDPARTY"
+
+[tool.mypy]
+no_strict_optional = true
+
+[tool.ruff]
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # flake8
+    "C",  # flake8-comprehensions
+    "B",  # flake8-bugbear
+]
+ignore = [
+    "E501",  # line too long, handled by black
+    "B008",  # do not perform function calls in argument defaults
+    "B905",  # ignore zip() without an explicit strict= parameter, only support with python >3.10
+]
+
