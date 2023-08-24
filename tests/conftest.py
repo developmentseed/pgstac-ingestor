@@ -23,7 +23,7 @@ def test_environ(monkeypatch):
 
 
 @pytest.fixture
-def mock_ssm_parameter_store():
+def mock_ssm_parameter_store(test_environ):
     with mock_ssm():
         yield boto3.client("ssm")
 
