@@ -83,7 +83,7 @@ class TestCreate:
             self.example_ingestion.item.collection
         )
 
-        stored_data = self.db.fetch_many(status="queued")["items"]
+        stored_data = self.db.fetch_many(status="queued").items
         assert len(stored_data) == 1
         assert json.loads(stored_data[0].json(by_alias=True)) == response.json()
 
@@ -100,7 +100,7 @@ class TestCreate:
         )
         assert response.status_code == 422, "should get validation error"
         assert (
-            len(self.db.fetch_many(status="queued")["items"]) == 0
+            len(self.db.fetch_many(status="queued").items) == 0
         ), "data should not be stored in DB"
 
     def test_validates_missing_assets(
@@ -130,7 +130,7 @@ class TestCreate:
                 ]
             ), "should reference asset type in validation error response"
         assert (
-            len(self.db.fetch_many(status="queued")["items"]) == 0
+            len(self.db.fetch_many(status="queued").items) == 0
         ), "data should not be stored in DB"
 
 
