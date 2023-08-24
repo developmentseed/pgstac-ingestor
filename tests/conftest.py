@@ -31,7 +31,7 @@ def mock_ssm_parameter_store():
 
 @pytest.fixture
 def app(test_environ, mock_ssm_parameter_store):
-    from src.main import app
+    from pgstac_ingestor.main import app
 
     return app
 
@@ -43,8 +43,8 @@ def api_client(app):
 
 @pytest.fixture
 def mock_table(app, test_environ):
-    from src import dependencies
-    from src.config import settings
+    from pgstac_ingestor import dependencies
+    from pgstac_ingestor.config import settings
 
     with mock_dynamodb():
         client = boto3.resource("dynamodb")
@@ -246,7 +246,7 @@ def client_authenticated(app):
     """
     Returns an API client which skips the authentication
     """
-    from src.dependencies import get_username
+    from pgstac_ingestor.dependencies import get_username
 
     app.dependency_overrides[get_username] = lambda: "test_user"
     return TestClient(app)
@@ -254,14 +254,14 @@ def client_authenticated(app):
 
 @pytest.fixture
 def stac_collection(example_stac_collection):
-    from src import schemas
+    from pgstac_ingestor import schemas
 
     return schemas.StacCollection(**example_stac_collection)
 
 
 @pytest.fixture
 def example_ingestion(example_stac_item):
-    from src import schemas
+    from pgstac_ingestor import schemas
 
     return schemas.Ingestion(
         id=example_stac_item["id"],

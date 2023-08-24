@@ -9,14 +9,14 @@ from fastapi.encoders import jsonable_encoder
 
 if TYPE_CHECKING:
     from fastapi.testclient import TestClient
-    from src import schemas, services
+    from pgstac_ingestor import schemas, services
 
 ingestion_endpoint = "/ingestions"
 
 
 @pytest.fixture()
 def collection_exists():
-    with patch("src.validators.collection_exists", return_value=True) as m:
+    with patch("pgstac_ingestor.validators.collection_exists", return_value=True) as m:
         yield m
 
 
@@ -25,13 +25,13 @@ def collection_missing():
     def bad_collection(collection_id: str):
         raise ValueError("MOCKED MISSING COLLECTION ERROR")
 
-    with patch("src.validators.collection_exists", side_effect=bad_collection) as m:
+    with patch("pgstac_ingestor.validators.collection_exists", side_effect=bad_collection) as m:
         yield m
 
 
 @pytest.fixture()
 def asset_exists():
-    with patch("src.validators.url_is_accessible", return_value=True) as m:
+    with patch("pgstac_ingestor.validators.url_is_accessible", return_value=True) as m:
         yield m
 
 
@@ -40,7 +40,7 @@ def asset_missing():
     def bad_asset_url(href: str):
         raise ValueError("MOCKED INACCESSIBLE URL ERROR")
 
-    with patch("src.validators.url_is_accessible", side_effect=bad_asset_url) as m:
+    with patch("pgstac_ingestor.validators.url_is_accessible", side_effect=bad_asset_url) as m:
         yield m
 
 
@@ -52,7 +52,7 @@ class TestCreate:
         mock_table: "services.Table",
         example_ingestion: "schemas.Ingestion",
     ):
-        from src import services
+        from pgstac_ingestor import services
 
         self.api_client = api_client
         self.mock_table = mock_table

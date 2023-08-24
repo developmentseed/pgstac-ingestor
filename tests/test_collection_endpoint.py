@@ -4,7 +4,7 @@ publish_collections_endpoint = "/collections"
 delete_collection_endpoint = "/collections/{collection_id}"
 
 
-@patch("src.collection.ingest")
+@patch("pgstac_ingestor.collection.ingest")
 def test_auth_publish_collection(
     ingest, stac_collection, example_stac_collection, client_authenticated
 ):
@@ -23,7 +23,7 @@ def test_unauth_publish_collection(client, example_stac_collection):
     assert response.status_code == 403
 
 
-@patch("src.collection.delete")
+@patch("pgstac_ingestor.collection.delete")
 def test_auth_delete_collection(delete, example_stac_collection, client_authenticated):
     token = "token"
     response = client_authenticated.delete(

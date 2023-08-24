@@ -2,20 +2,20 @@ from unittest.mock import Mock, patch
 
 import pytest
 from fastapi.encoders import jsonable_encoder
-from src.utils import DbCreds
+from pgstac_ingestor.utils import DbCreds
 
 from pypgstac.load import Methods
 
 
 @pytest.fixture()
 def loader():
-    with patch("src.utils.Loader", autospec=True) as m:
+    with patch("pgstac_ingestor.utils.Loader", autospec=True) as m:
         yield m
 
 
 @pytest.fixture()
 def pgstacdb():
-    with patch("src.utils.PgstacDB", autospec=True) as m:
+    with patch("pgstac_ingestor.utils.PgstacDB", autospec=True) as m:
         m.return_value.__enter__.return_value = Mock()
         yield m
 
@@ -27,7 +27,7 @@ def dbcreds():
 
 
 def test_load_items(loader, pgstacdb, example_ingestion, dbcreds):
-    import src.utils as utils
+    from pgstac_ingestor import utils
 
     utils.load_items(dbcreds, [example_ingestion])
     loader.return_value.load_items.assert_called_once_with(
