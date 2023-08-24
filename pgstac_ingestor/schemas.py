@@ -21,7 +21,7 @@ from stac_pydantic import Collection, Item, shared
 from pgstac_ingestor import validators
 
 if TYPE_CHECKING:
-    from . import services
+    from pgstac_ingestor import services
 
 
 class AccessibleAsset(shared.Asset):
