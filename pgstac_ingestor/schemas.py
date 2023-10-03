@@ -106,7 +106,7 @@ class Ingestion(BaseModel):
 class ListIngestionRequest:
     status: Status = Status.queued
     limit: PositiveInt = None
-    next: Optional[str] = None
+    next: Optional[Dict] = None
 
     def __post_init_post_parse__(self) -> None:
         # https://github.com/tiangolo/fastapi/issues/1474#issuecomment-1049987786
@@ -114,7 +114,7 @@ class ListIngestionRequest:
             return
 
         try:
-            self.next = json.loads(base64.b64decode(self.next))
+            self.next = json.loads(base64.b64decode(self.next))  # type: ignore
         except (UnicodeDecodeError, binascii.Error) as e:
             raise RequestValidationError(
                 [

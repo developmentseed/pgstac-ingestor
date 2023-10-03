@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING, Dict, List, Optional
 
 from boto3.dynamodb import conditions
 from pydantic import parse_obj_as
@@ -28,15 +28,21 @@ class Database:
     def fetch_many(
         self,
         status: str,
-        next: Optional[str] = None,
+        offset: Optional[Dict[str, Dict[str, str]]] = None,
         limit: Optional[int] = None,
     ) -> schemas.ListIngestionResponse:
-        response = self.table.query(
-            IndexName="status",
-            KeyConditionExpression=conditions.Key("status").eq(status),
-            **{"Limit": limit} if limit else {},
-            **{"ExclusiveStartKey": next} if next else {},
-        )
+
+        params = {
+            "IndexName": "status",
+            "KeyConditionExpression": conditions.Key("status").eq(status),
+        }
+        if limit:
+            params["Limit"] = limit
+
+        if offset:
+            params["ExclusiveStartKey"] = offset
+
+        response = self.table.query(**params)
         return schemas.ListIngestionResponse(
             items=parse_obj_as(List[schemas.Ingestion], response["Items"]),
             next=response.get("LastEvaluatedKey"),

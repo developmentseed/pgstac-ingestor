@@ -18,7 +18,7 @@ async def list_ingestions(
 ):
     return db.fetch_many(
         status=list_request.status,
-        next=list_request.next,
+        offset=list_request.next,
         limit=list_request.limit,
     )
 
