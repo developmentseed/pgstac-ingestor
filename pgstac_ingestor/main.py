@@ -17,7 +17,9 @@ async def list_ingestions(
     db: services.Database = Depends(dependencies.get_db),
 ):
     return db.fetch_many(
-        status=list_request.status, next=list_request.next, limit=list_request.limit
+        status=list_request.status,
+        offset=list_request.next,
+        limit=list_request.limit,
     )
 
 

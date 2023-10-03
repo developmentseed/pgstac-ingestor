@@ -66,15 +66,14 @@ class Status(str, enum.Enum):
 class Ingestion(BaseModel):
     id: str
     status: Status
-    message: Optional[str]
+    message: Optional[str] = None
     created_by: str
     created_at: datetime = None
     updated_at: datetime = None
 
     item: Union[Item, Json[Item]]
 
-    @validator("created_at", pre=True, always=True, allow_reuse=True)
-    @validator("updated_at", pre=True, always=True, allow_reuse=True)
+    @validator("updated_at", "created_at", pre=True, always=True, allow_reuse=True)
     def set_ts_now(cls, v):
         return v or datetime.now()
 
@@ -107,7 +106,7 @@ class Ingestion(BaseModel):
 class ListIngestionRequest:
     status: Status = Status.queued
     limit: PositiveInt = None
-    next: Optional[str] = None
+    next: Optional[Dict] = None
 
     def __post_init_post_parse__(self) -> None:
         # https://github.com/tiangolo/fastapi/issues/1474#issuecomment-1049987786
@@ -115,7 +114,7 @@ class ListIngestionRequest:
             return
 
         try:
-            self.next = json.loads(base64.b64decode(self.next))
+            self.next = json.loads(base64.b64decode(self.next))  # type: ignore
         except (UnicodeDecodeError, binascii.Error) as e:
             raise RequestValidationError(
                 [

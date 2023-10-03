@@ -9,6 +9,7 @@ from fastapi.encoders import jsonable_encoder
 
 if TYPE_CHECKING:
     from fastapi.testclient import TestClient
+
     from pgstac_ingestor import schemas, services
 
 ingestion_endpoint = "/ingestions"
@@ -25,7 +26,9 @@ def collection_missing():
     def bad_collection(collection_id: str):
         raise ValueError("MOCKED MISSING COLLECTION ERROR")
 
-    with patch("pgstac_ingestor.validators.collection_exists", side_effect=bad_collection) as m:
+    with patch(
+        "pgstac_ingestor.validators.collection_exists", side_effect=bad_collection
+    ) as m:
         yield m
 
 
@@ -40,7 +43,9 @@ def asset_missing():
     def bad_asset_url(href: str):
         raise ValueError("MOCKED INACCESSIBLE URL ERROR")
 
-    with patch("pgstac_ingestor.validators.url_is_accessible", side_effect=bad_asset_url) as m:
+    with patch(
+        "pgstac_ingestor.validators.url_is_accessible", side_effect=bad_asset_url
+    ) as m:
         yield m
 
 
@@ -78,7 +83,7 @@ class TestCreate:
             self.example_ingestion.item.collection
         )
 
-        stored_data = self.db.fetch_many(status="queued")["items"]
+        stored_data = self.db.fetch_many(status="queued").items
         assert len(stored_data) == 1
         assert json.loads(stored_data[0].json(by_alias=True)) == response.json()
 
@@ -95,7 +100,7 @@ class TestCreate:
         )
         assert response.status_code == 422, "should get validation error"
         assert (
-            len(self.db.fetch_many(status="queued")["items"]) == 0
+            len(self.db.fetch_many(status="queued").items) == 0
         ), "data should not be stored in DB"
 
     def test_validates_missing_assets(
@@ -125,7 +130,7 @@ class TestCreate:
                 ]
             ), "should reference asset type in validation error response"
         assert (
-            len(self.db.fetch_many(status="queued")["items"]) == 0
+            len(self.db.fetch_many(status="queued").items) == 0
         ), "data should not be stored in DB"
 
 

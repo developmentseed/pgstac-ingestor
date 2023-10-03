@@ -2,8 +2,8 @@ from unittest.mock import Mock, patch
 
 import pytest
 from fastapi.encoders import jsonable_encoder
-from pgstac_ingestor.utils import DbCreds
 
+from pgstac_ingestor.utils import DbCreds
 from pypgstac.load import Methods
 
 

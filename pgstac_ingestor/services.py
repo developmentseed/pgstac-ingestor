@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, Dict, List, Optional
 
 from boto3.dynamodb import conditions
 from pydantic import parse_obj_as
@@ -26,18 +26,27 @@ class Database:
             raise NotInDb("Record not found") from e
 
     def fetch_many(
-        self, status: str, next: dict = None, limit: int = None
+        self,
+        status: str,
+        offset: Optional[Dict[str, Dict[str, str]]] = None,
+        limit: Optional[int] = None,
     ) -> schemas.ListIngestionResponse:
-        response = self.table.query(
-            IndexName="status",
-            KeyConditionExpression=conditions.Key("status").eq(status),
-            **{"Limit": limit} if limit else {},
-            **{"ExclusiveStartKey": next} if next else {},
-        )
-        return {
-            "items": parse_obj_as(List[schemas.Ingestion], response["Items"]),
-            "next": response.get("LastEvaluatedKey"),
+
+        params = {
+            "IndexName": "status",
+            "KeyConditionExpression": conditions.Key("status").eq(status),
         }
+        if limit:
+            params["Limit"] = limit
+
+        if offset:
+            params["ExclusiveStartKey"] = offset
+
+        response = self.table.query(**params)
+        return schemas.ListIngestionResponse(
+            items=parse_obj_as(List[schemas.Ingestion], response["Items"]),
+            next=response.get("LastEvaluatedKey"),
+        )
 
 
 class NotInDb(Exception):

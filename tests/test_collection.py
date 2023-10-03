@@ -2,9 +2,9 @@ import os
 from unittest.mock import Mock, patch
 
 import pytest
+
 import pgstac_ingestor.collection as collection
 from pgstac_ingestor.utils import DbCreds
-
 from pypgstac.load import Methods
 
 
