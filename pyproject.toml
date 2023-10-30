@@ -1,6 +1,6 @@
 [project]
 name = "pgstac-ingestor"
-description = "Construct and use map tile grids (a.k.a TileMatrixSet / TMS)."
+description = "An API for large scale STAC data ingestion and validation into a pgSTAC instance."
 readme = "README.md"
 requires-python = ">=3.9"
 license = {file = "LICENSE"}
@@ -25,7 +25,6 @@ dependencies = [
     "cachetools==5.1.0",
     "fastapi>=0.75.1",
     "orjson>=3.6.8",
-    "psycopg[binary,pool]>=3.0.15",
     "pydantic_ssm_settings>=0.2.0",
     "pydantic>=1.9.0,<2.0",
     "pypgstac==0.6.13",
@@ -35,6 +34,18 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+# https://www.psycopg.org/psycopg3/docs/api/pq.html#pq-module-implementations
+psycopg = [  # pure python implementation
+    "psycopg[pool]>=3.0.15"
+]
+psycopg-c = [  # C implementation of the libpq wrapper
+    "psycopg[c,pool]>=3.0.15"
+]
+
+psycopg-binary = [  # pre-compiled C implementation
+    "psycopg[binary,pool]>=3.0.15"
+]
+
 test = [
     "pytest",
     "pytest-cov",
